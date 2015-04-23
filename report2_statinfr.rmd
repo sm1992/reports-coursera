@@ -1,0 +1,59 @@
+---
+Title: Report 2
+Author: Saurabh
+---
+Report 2
+=======
+## Intro
+This document is a report to submit analysis asked for in the Coursera Statistical Inference Project, Question 1.
+
+## Question
+Now in the second portion of the class, we're going to analyze the _ToothGrowth_ data in the _R datasets_ package.  
+1. Load the _ToothGrowth_ data and perform some basic exploratory data analyses  
+2. Provide a basic summary of the data.  
+3. Use confidence intervals and/or hypothesis tests to compare tooth growth by _supp_ and _dose_. (**Only use the techniques from class, even if there's other approaches worth considering**)  
+4. State your conclusions and the assumptions needed for your conclusions. 
+
+## Solution
+Let's load and summarize the data
+```{r load}
+# load and summarize data
+library(datasets)
+data(ToothGrowth)
+summary(ToothGrowth)
+```
+For analysis to proceed, we have to understand the variables. They are:
+- **len**: Tooth length (_numeric_)
+- **supp**: Supplement type (_factor_);
+- **dose**: Dose of vitamin C (_numeric_).
+Next, lets convert dose to a factor variable
+```{r convert}
+ToothGrowth$dose<-as.factor(ToothGrowth$dose)
+```
+Let's get a good idea of the data by drawing some plots
+```{r define}
+par(mfrow=c(2,2))
+plot(ToothGrowth$len,ToothGrowth$dose,ylab="Tooth Length",xlab="Vitamin C dose (mg)",main="Tooth Growth")
+with(ToothGrowth,boxplot(len~dose,boxwex=0.25,col="lightgray",ylim=c(0,35),ylab="Tooth Length",xlab="Vitamin C dose (mg)",main="Tooth Growth"))
+plot(ToothGrowth$len,ToothGrowth$sup,ylab="Tooth Length",xlab="Supplement",main="Tooth Growth")
+with(ToothGrowth,
+     boxplot(len~supp,boxwex=0.25,col="lightgray",ylim=c(0,35),
+             ylab="Tooth Length",xlab="Supplement",main="Tooth Growth"))
+```
+From the plots it seems like dose has a direct correlation with tooth length whereas no such relation seems to exist between supplement and length
+
+The results of the hypothesis are shown below. All tests are performed at the 0.05 significance level.
+
+```{r hyptests}
+# Hypothesis test regarding differences between the two levels of supp:
+with(ToothGrowth,t.test(len~supp))
+
+# Hypothesis tests regarding differences between the levels of dose, pairwise:
+with(ToothGrowth,pairwise.t.test(len,dose,p.adjust="none"))
+```
+From the results shown above we can derive the following conclusions:
+
+- Cannot reject null hypothesis at 0.05 significance;
+- There is sufficient evidence to reject the null hypotheses in all comparisons of levels of the factor **dose**, at the 0.05 significance level.
+
+The above  results suggest that the mean tooth growth is directly correlated with the doese amount and increases with increase in dosage
